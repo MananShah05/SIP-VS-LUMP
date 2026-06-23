@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "node scripts/kill-port.cjs && next dev -p 3000",
-    "build": "next build && xcopy /E /I .next\\static .next\\standalone\\.next\\ && xcopy /E /I public .next\\standalone\\",
+    "build": "next build && node scripts/copy-standalone.js",
     "start": "set NODE_ENV=production&& bun .next/standalone/server.js > server.log 2>&1",
     "lint": "eslint .",
     "db:push": "prisma db push",
