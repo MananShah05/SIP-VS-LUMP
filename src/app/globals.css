@@ -1,0 +1,217 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ===========================================================
+   SIP vs LUMP — Cinematic Wealth Calculator
+   Design tokens (OKLCH). Dark, indigo-tinted near-black with
+   emerald (SIP) and amber (Lump) accents.
+   =========================================================== */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-instrument-serif);
+  --font-mono: var(--font-jetbrains-mono);
+
+  /* shadcn mappings (still wired so existing components work) */
+  --color-card: var(--surface);
+  --color-card-foreground: var(--foreground);
+  --color-popover: var(--surface);
+  --color-popover-foreground: var(--foreground);
+  --color-primary: var(--sip);
+  --color-primary-foreground: var(--background);
+  --color-secondary: var(--surface-elevated);
+  --color-secondary-foreground: var(--foreground);
+  --color-muted: var(--surface-elevated);
+  --color-muted-foreground: var(--muted-text);
+  --color-accent: var(--lump);
+  --color-accent-foreground: var(--background);
+  --color-destructive: oklch(0.65 0.22 25);
+  --color-border: var(--border);
+  --color-input: var(--border);
+  --color-ring: var(--sip);
+  --color-chart-1: var(--sip);
+  --color-chart-2: var(--lump);
+  --color-sidebar: var(--surface);
+  --color-sidebar-foreground: var(--foreground);
+  --color-sidebar-primary: var(--sip);
+  --color-sidebar-primary-foreground: var(--background);
+  --color-sidebar-accent: var(--surface-elevated);
+  --color-sidebar-accent-foreground: var(--foreground);
+  --color-sidebar-border: var(--border);
+  --color-sidebar-ring: var(--sip);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.75rem;
+
+  /* Core palette */
+  --background: oklch(12% 0.01 260);
+  --surface: oklch(18% 0.012 260);
+  --surface-elevated: oklch(22% 0.014 260);
+  --foreground: oklch(92% 0.008 260);
+  --muted-text: oklch(58% 0.012 260);
+  --border: oklch(28% 0.012 260);
+
+  /* Accents — emerald for SIP (solid line), amber for Lump (dashed line) */
+  --sip: oklch(72% 0.18 145);       /* emerald */
+  --sip-soft: oklch(72% 0.12 145 / 0.18);
+  --lump: oklch(72% 0.20 55);       /* amber-gold (warmer per spec) */
+  --lump-soft: oklch(72% 0.14 55 / 0.18);
+
+  /* Keep dark theme applied by default — no toggle */
+  color-scheme: dark;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    scroll-behavior: auto; /* GSAP controls scroll */
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-inter), system-ui, sans-serif;
+    /* overflow-x: clip (NOT hidden) — hidden establishes a scroll
+       container that breaks position:sticky descendants. */
+    overflow-x: clip;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Type recipe */
+  .font-display {
+    font-family: var(--font-instrument-serif), Georgia, serif;
+    font-weight: 400;
+    letter-spacing: -0.015em;
+  }
+  .font-mono-num {
+    font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+    font-feature-settings: "tnum" 1, "zero" 1;
+  }
+
+  ::selection {
+    background: var(--sip-soft);
+    color: var(--foreground);
+  }
+
+  /* Custom slim scrollbar */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: oklch(28% 0.012 260);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: oklch(38% 0.014 260); }
+}
+
+/* ===========================================================
+   Utility layers specific to the cinematic experience
+   =========================================================== */
+@layer components {
+  .glass-panel {
+    background: linear-gradient(
+      180deg,
+      oklch(22% 0.014 260 / 0.85),
+      oklch(15% 0.012 260 / 0.7)
+    );
+    backdrop-filter: blur(20px) saturate(120%);
+    -webkit-backdrop-filter: blur(20px) saturate(120%);
+    border: 1px solid oklch(40% 0.014 260 / 0.4);
+  }
+
+  .grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.04;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+
+  .act-section {
+    position: relative;
+    width: 100%;
+  }
+
+  .pin-container {
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Hairline divider used between sections */
+  .hairline {
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent,
+      oklch(45% 0.012 260 / 0.6),
+      transparent
+    );
+  }
+
+  /* Glow used behind big numbers */
+  .glow-sip {
+    box-shadow: 0 0 80px -10px oklch(72% 0.18 145 / 0.4);
+  }
+  .glow-lump {
+    box-shadow: 0 0 80px -10px oklch(78% 0.16 75 / 0.4);
+  }
+}
+
+/* Reduced motion safety: kill scroll-driven transforms */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .pin-container { height: auto !important; overflow: visible !important; }
+}
+
+/* Range input restyle to match palette */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: oklch(28% 0.012 260);
+  border-radius: 999px;
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--sip);
+  cursor: pointer;
+  border: 2px solid oklch(12% 0.01 260);
+  box-shadow: 0 0 0 1px oklch(72% 0.18 145 / 0.4);
+  transition: transform 0.15s ease;
+}
+input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--sip);
+  cursor: pointer;
+  border: 2px solid oklch(12% 0.01 260);
+}
